@@ -99,7 +99,7 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 
 			if (var.bGlow)
 			{
-				DWORD glowObject = var.clientDll + offset.dwGlowObjectManager;
+				DWORD glowObject = *(DWORD*)(var.clientDll + offset.dwGlowObjectManager);
 				int myTeam = *(int*)Mem::FindDMAAddy((uintptr_t)var.localPlayer, { offset.m_iTeam });
 
 				for (short int i = 0; i < 64; i++)
@@ -112,10 +112,15 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 
 						if (team != myTeam)
 						{
-							*(float*)(glowObject + ((glowIndex * 0x38) + 0x8)) = 2.f; //red
-							*(float*)(glowObject + ((glowIndex * 0x38) + 0xc)) = 0.f; //green
-							*(float*)(glowObject + ((glowIndex * 0x38) + 0x10)) = 0.f; //blue
-							*(float*)(glowObject + ((glowIndex * 0x38) + 0x14)) = 1.7f; //alpha
+							if (true)
+							{
+							}
+							else {
+								*(float*)(glowObject + ((glowIndex * 0x38) + 0x8)) = 2.f; //red
+								*(float*)(glowObject + ((glowIndex * 0x38) + 0xc)) = 0.f; //green
+								*(float*)(glowObject + ((glowIndex * 0x38) + 0x10)) = 0.f; //blue
+								*(float*)(glowObject + ((glowIndex * 0x38) + 0x14)) = 1.7f; //alpha
+							}
 						}
 						else {
 							*(float*)(glowObject + ((glowIndex * 0x38) + 0x8)) = 0.f;
