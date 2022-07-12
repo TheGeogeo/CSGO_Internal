@@ -141,8 +141,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="csgo_ent.h" />
+    <ClInclude Include="csgo.hpp" />
+    <ClInclude Include="csgo_util.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Glow.h" />
     <ClInclude Include="Mem.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Proc.h" />

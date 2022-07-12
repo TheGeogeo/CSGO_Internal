@@ -2,28 +2,15 @@
 #include "pch.h"
 #include <iostream>
 
+#include "csgo.hpp"
+
 #include "Proc.h"
 #include "Mem.h"
-#include "csgo_ent.h"
+#include "csgo_util.h"
+#include "Glow.h"
 
-void UI() {
-	std::system("cls");
-
-	const char* strBhop = var.bBhop ? "ON" : "OFF";
-	const char* strRadar = var.bRadar ? "ON" : "OFF";
-	const char* strAntiFlash = var.bAntiFlash ? "ON" : "OFF";
-	const char* strGlow = var.bGlow ? "ON" : "OFF";
-
-	std::cout << "By TheGeogeo" << std::endl;
-	std::cout << "" << std::endl;
-	std::cout << "NUMPAD1 BunnyHop > " << strBhop << std::endl;
-	std::cout << "NUMPAD2 RadarHack > " << strRadar << std::endl;
-	std::cout << "NUMPAD3 AntiFlash > " << strAntiFlash << std::endl;
-	std::cout << "" << std::endl;
-	std::cout << "NUMPAD0 GlowHack > " << strGlow << std::endl;
-	std::cout << "" << std::endl;
-	std::cout << "END > Unload Cheat" << std::endl;
-}
+using namespace hazedumper::netvars;
+using namespace hazedumper::signatures;
 
 DWORD WINAPI MainHack(HMODULE hModule) {
 	AllocConsole();
@@ -31,7 +18,7 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 	freopen_s(&fConsole, "CONOUT$", "w", stdout);
 
 	var.clientDll = (DWORD)GetModuleHandle(L"client.dll");
-	var.localPlayer = var.clientDll + offset.dwLocalPlayer;
+	var.localPlayer = var.clientDll + dwLocalPlayer;
 
 	UI();
 
@@ -71,26 +58,26 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 			if (var.bBhop)
 			{
 				if (isPlayerMoving())
-					if (*(int*)Mem::FindDMAAddy(var.localPlayer, { offset.m_fFlags }) == 257 && GetAsyncKeyState(VK_SPACE))
-						*(BYTE*)(var.clientDll + offset.dwForceJump) = 6;
+					if (*(int*)Mem::FindDMAAddy(var.localPlayer, { m_fFlags }) == 257 && GetAsyncKeyState(VK_SPACE))
+						*(BYTE*)(var.clientDll + dwForceJump) = 6;
 			}
 
 			if (var.bRadar)
 			{
 				for (short i = 0; i < 64; i++)
 				{
-					DWORD ent = *(DWORD*)(var.clientDll + offset.entityList + i * offset.nextEnt);
+					DWORD ent = *(DWORD*)(var.clientDll + dwEntityList + i * var.nextEnt);
 					if (ent)
 					{
-						*(BYTE*)(ent + offset.m_bSpotted) = 1;
-						*(BYTE*)(ent + offset.m_bSpottedByMask) = 1;
+						*(BYTE*)(ent + m_bSpotted) = 1;
+						*(BYTE*)(ent + m_bSpottedByMask) = 1;
 					}
 				}
 			}
 
 			if (var.bAntiFlash)
 			{
-				int* flashDur = (int*)Mem::FindDMAAddy((uintptr_t)(var.localPlayer), { offset.m_iFlashDuration });
+				int* flashDur = (int*)Mem::FindDMAAddy((uintptr_t)(var.localPlayer), { m_flFlashDuration });
 				if (*flashDur > 0)
 				{
 					*flashDur = 0;
@@ -99,43 +86,35 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 
 			if (var.bGlow)
 			{
-				DWORD glowObject = *(DWORD*)(var.clientDll + offset.dwGlowObjectManager);
-				int myTeam = *(int*)Mem::FindDMAAddy((uintptr_t)var.localPlayer, { offset.m_iTeam });
+				uintptr_t glowObject = *(DWORD*)(var.clientDll + dwGlowObjectManager);
+				int myTeam = *(int*)Mem::FindDMAAddy((uintptr_t)var.localPlayer, { m_iTeamNum });
 
 				for (short int i = 0; i < 64; i++)
 				{
-					DWORD entity = var.clientDll + offset.entityList + i * offset.nextEnt;
-					if (*(DWORD*)entity)
+					uintptr_t entity = var.clientDll + dwEntityList + i * var.nextEnt;
+					if (*(uintptr_t*)entity)
 					{
-						int team = *(int*)Mem::FindDMAAddy((uintptr_t)entity, { offset.m_iTeam });
-						int glowIndex = *(int*)Mem::FindDMAAddy((uintptr_t)entity, { offset.m_iGlowIndex });
+						int team = *(int*)Mem::FindDMAAddy(entity, { m_iTeamNum });
+						int glowIndex = *(int*)Mem::FindDMAAddy(entity, { m_iGlowIndex });
+						state st;
+						st.health = *(int*)Mem::FindDMAAddy(entity, { m_iHealth });
+						st.defusing = *(bool*)Mem::FindDMAAddy(entity, { m_bIsDefusing });
 
 						if (team != myTeam)
 						{
-							if (true)
-							{
-							}
-							else {
-								*(float*)(glowObject + ((glowIndex * 0x38) + 0x8)) = 2.f; //red
-								*(float*)(glowObject + ((glowIndex * 0x38) + 0xc)) = 0.f; //green
-								*(float*)(glowObject + ((glowIndex * 0x38) + 0x10)) = 0.f; //blue
-								*(float*)(glowObject + ((glowIndex * 0x38) + 0x14)) = 1.7f; //alpha
-							}
+							GlowStruct Tgt = *(GlowStruct*)(glowObject + (glowIndex * 0x38));
+							SetEnemyGlow(entity, Tgt, st);
+							*(GlowStruct*)(glowObject + (glowIndex * 0x38)) = Tgt;
 						}
 						else {
-							*(float*)(glowObject + ((glowIndex * 0x38) + 0x8)) = 0.f;
-							*(float*)(glowObject + ((glowIndex * 0x38) + 0xc)) = 0.f;
-							*(float*)(glowObject + ((glowIndex * 0x38) + 0x10)) = 2.f;
-							*(float*)(glowObject + ((glowIndex * 0x38) + 0x14)) = 1.7f;
+							GlowStruct Egt = *(GlowStruct*)(glowObject + (glowIndex * 0x38));
+							SetTeamGlow(entity, Egt);
+							*(GlowStruct*)(glowObject + (glowIndex * 0x38)) = Egt;
 						}
-
-						*(bool*)(glowObject + ((glowIndex * 0x38) + 0x28)) = true; //occluded
-						*(bool*)(glowObject + ((glowIndex * 0x38) + 0x29)) = false; //unOcluded
 					}
 				}
 			}
 		}
-		Sleep(1);
 	}
 
 	int tmpaa = fclose(fConsole);
