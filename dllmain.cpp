@@ -18,6 +18,7 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 	freopen_s(&fConsole, "CONOUT$", "w", stdout);
 
 	var.clientDll = (DWORD)GetModuleHandle(L"client.dll");
+	var.engineDll = (DWORD)GetModuleHandle(L"engine.dll");
 	var.localPlayer = var.clientDll + dwLocalPlayer;
 
 	UI();
@@ -48,10 +49,16 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 			{
 				var.bGlow = !var.bGlow;
 				UI();
+
+				if (var.bGlow)
+					SetBrightness(5.f);
+				else
+					DisableGlow();
 			}
 
 			if (GetAsyncKeyState(VK_END) & 1)
 			{
+				var.bUnload = true;
 				break;
 			}
 
@@ -105,17 +112,22 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 							GlowStruct Tgt = *(GlowStruct*)(glowObject + (glowIndex * 0x38));
 							SetEnemyGlow(entity, Tgt, st);
 							*(GlowStruct*)(glowObject + (glowIndex * 0x38)) = Tgt;
+							*(ClrRender*)Mem::FindDMAAddy(entity, { m_clrRender }) = st.clrRender;
 						}
 						else {
 							GlowStruct Egt = *(GlowStruct*)(glowObject + (glowIndex * 0x38));
-							SetTeamGlow(entity, Egt);
+							SetTeamGlow(entity, Egt, st);
 							*(GlowStruct*)(glowObject + (glowIndex * 0x38)) = Egt;
+							*(ClrRender*)Mem::FindDMAAddy(entity, { m_clrRender }) = st.clrRender;
 						}
 					}
 				}
 			}
 		}
 	}
+
+	//disable all thing
+	DisableGlow();
 
 	int tmpaa = fclose(fConsole);
 	FreeConsole();

@@ -1,5 +1,9 @@
 #pragma once
 
+struct ClrRender {
+	BYTE red, green, blue;
+};
+
 struct GlowStruct
 {
 	BYTE base[8];
@@ -19,9 +23,20 @@ struct state
 {
 	int health;
 	bool defusing;
+	ClrRender clrRender;
 };
 
-inline void SetTeamGlow(uintptr_t entity, GlowStruct& gt) {
+void SetBrightness(float bright, bool bXor = true) {
+	int ptr = *(int*)(var.engineDll + model_ambient_min);
+	int xorPtr;
+	if (bXor)
+		xorPtr = *(int*)&bright ^ ptr;
+	else
+		xorPtr = *(int*)&bright;
+	*(int*)(var.engineDll + model_ambient_min) = xorPtr;
+}
+
+inline void SetTeamGlow(uintptr_t entity, GlowStruct& gt, state& st) {
 	gt.red = 0.f;
 	gt.green = 0.f;
 	gt.blue = 2.f;
@@ -29,6 +44,10 @@ inline void SetTeamGlow(uintptr_t entity, GlowStruct& gt) {
 	gt.renderWhenOccluded = true;
 	gt.renderWhenUnOccluded = false;
 	gt.fullBloom = false;
+
+	st.clrRender.red = 0;
+	st.clrRender.green = 0;
+	st.clrRender.blue = 255;
 }
 
 inline void SetEnemyGlow(uintptr_t entity, GlowStruct& gt, state& st) {
@@ -49,4 +68,31 @@ inline void SetEnemyGlow(uintptr_t entity, GlowStruct& gt, state& st) {
 	gt.renderWhenOccluded = true;
 	gt.renderWhenUnOccluded = false;
 	gt.fullBloom = false;
+
+	st.clrRender.red = 0;
+	st.clrRender.green = 255;
+	st.clrRender.blue = 0;
+}
+
+void DisableGlow() {
+	if (!var.bUnload || var.bGlow)
+	{
+		SetBrightness(-5.f);
+		SetBrightness(5.f);
+		SetBrightness(-5.f);
+	}
+
+	ClrRender clrRender;
+	clrRender.red = -1;
+	clrRender.green = -1;
+	clrRender.blue = -1;
+
+	for (short int i = 0; i < 64; i++)
+	{
+		uintptr_t entity = var.clientDll + dwEntityList + i * var.nextEnt;
+		if (*(uintptr_t*)entity)
+		{
+			*(ClrRender*)Mem::FindDMAAddy(entity, { m_clrRender }) = clrRender;
+		}
+	}
 }

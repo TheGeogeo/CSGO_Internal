@@ -7,9 +7,12 @@ using namespace hazedumper::signatures;
 struct variables
 {
 	DWORD clientDll;
+	DWORD engineDll;
 	DWORD localPlayer;
 
 	DWORD nextEnt = 0x10;
+
+	bool bUnload = false;
 
 	bool bBhop = false;
 	bool bRadar = false;
