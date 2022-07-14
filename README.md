@@ -10,6 +10,7 @@ The skin is green for a better render.
 <img src="img/GlowRender.PNG">
 
 # FEATURE
+- [x] CPU Usage
 - [x] BunnyHop
 - [x] Radar Hack
 - [x] Anti Flash
