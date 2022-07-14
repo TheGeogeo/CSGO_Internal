@@ -1,5 +1,4 @@
-// dllmain.cpp : Définit le point d'entrée de l'application DLL.
-#include "pch.h"
+#include <windows.h>
 #include <iostream>
 
 #include "csgo.hpp"
@@ -9,6 +8,7 @@
 #include "csgo_util.hpp"
 #include "Glow.hpp"
 #include "TriggerBot.hpp"
+#include "AutoRecoil.hpp"
 #include "Other.hpp"
 
 using namespace hazedumper::netvars;
@@ -19,15 +19,14 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 	FILE* fConsole;
 	freopen_s(&fConsole, "CONOUT$", "w", stdout);
 
-	var.clientDll = (DWORD)GetModuleHandle(L"client.dll");
-	var.engineDll = (DWORD)GetModuleHandle(L"engine.dll");
-	var.localPlayer = var.clientDll + dwLocalPlayer;
+	InitModule();
 
 	UI();
 
 	while (true)
 	{
-		if (var.clientDll && *(DWORD*)var.localPlayer)
+		InitVariable();
+		if (var.clientDll && var.localPlayer)
 		{
 			if (GetAsyncKeyState(VK_NUMPAD1) & 1)
 			{
@@ -79,6 +78,20 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 				}
 			}
 
+			if (GetAsyncKeyState(VK_F3) & 1)
+			{
+				var.bAutoRecoil = !var.bAutoRecoil;
+				UI();
+
+				if (var.bAutoRecoil)
+					t.autoRecoilT = new std::thread(&HandleAutoRecoil);
+				else
+				{
+					CloseThreadCustom(t.autoRecoilT, t.bAutoRecoilT);
+					t.bAutoRecoilT = true;
+				}
+			}
+
 			if (GetAsyncKeyState(VK_INSERT) & 1)
 			{
 				var.bLowCPU = !var.bLowCPU;
@@ -94,7 +107,7 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 			if (var.bBhop)
 			{
 				if (isPlayerMoving())
-					if (*(int*)Mem::FindDMAAddy(var.localPlayer, { m_fFlags }) == 257 && GetAsyncKeyState(VK_SPACE))
+					if (*(int*)(var.localPlayer + m_fFlags) == 257 && GetAsyncKeyState(VK_SPACE))
 						*(BYTE*)(var.clientDll + dwForceJump) = 6;
 			}
 
@@ -113,7 +126,7 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 
 			if (var.bAntiFlash)
 			{
-				int* flashDur = (int*)Mem::FindDMAAddy((uintptr_t)(var.localPlayer), { m_flFlashDuration });
+				int* flashDur = (int*)(var.localPlayer + m_flFlashDuration);
 				if (*flashDur > 0)
 				{
 					*flashDur = 0;
@@ -122,7 +135,7 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 		}
 
 		if (var.bLowCPU)
-			Sleep(5);
+			Sleep(var.delayUsageCPU);
 	}
 
 	//disable all thing

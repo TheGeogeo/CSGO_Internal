@@ -17,7 +17,7 @@ The skin is green for a better render.
 - [x] Glow ESP
 - [x] Trigger Bot
 - [ ] Aim Bot
-- [ ] Auto Recoil (work with aimbot)
+- [x] Auto Recoil
 
 # OFFSET
 You can find all offset <a href="https://github.com/frk1/hazedumper/blob/master/csgo.hpp">here</a>

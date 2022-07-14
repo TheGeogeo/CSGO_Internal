@@ -80,19 +80,19 @@ inline void DisableGlow() {
 		SetBrightness(-5.f);
 		SetBrightness(5.f);
 		SetBrightness(-5.f);
-	}
 
-	ClrRender clrRender;
-	clrRender.red = -1;
-	clrRender.green = -1;
-	clrRender.blue = -1;
+		ClrRender clrRender;
+		clrRender.red = -1;
+		clrRender.green = -1;
+		clrRender.blue = -1;
 
-	for (short int i = 0; i < 64; i++)
-	{
-		uintptr_t entity = var.clientDll + dwEntityList + i * var.nextEnt;
-		if (*(uintptr_t*)entity)
+		for (short int i = 0; i < 64; i++)
 		{
-			*(ClrRender*)Mem::FindDMAAddy(entity, { m_clrRender }) = clrRender;
+			uintptr_t* entity = (uintptr_t*)(var.clientDll + dwEntityList + i * var.nextEnt);
+			if (*entity)
+			{
+				*(ClrRender*)(*entity + m_clrRender) = clrRender;
+			}
 		}
 	}
 }
@@ -102,7 +102,7 @@ inline void HandleGlow()
 	while (t.bGlowT)
 	{
 		uintptr_t glowObject = *(DWORD*)(var.clientDll + dwGlowObjectManager);
-		int myTeam = *(int*)Mem::FindDMAAddy(var.localPlayer, { m_iTeamNum });
+		int myTeam = *(int*)(var.localPlayer + m_iTeamNum);
 
 		for (short int i = 0; i < 64; i++)
 		{
@@ -132,6 +132,6 @@ inline void HandleGlow()
 		}
 
 		if (var.bLowCPU)
-			Sleep(5);
+			Sleep(var.delayUsageCPU);
 	}
 }
