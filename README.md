@@ -15,7 +15,7 @@ The skin is green for a better render.
 - [x] Radar Hack
 - [x] Anti Flash
 - [x] Glow ESP
-- [ ] Trigger Bot
+- [x] Trigger Bot
 - [ ] Aim Bot
 - [ ] Auto Recoil (work with aimbot)
 
