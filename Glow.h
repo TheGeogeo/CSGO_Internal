@@ -74,7 +74,7 @@ inline void SetEnemyGlow(uintptr_t entity, GlowStruct& gt, state& st) {
 	st.clrRender.blue = 0;
 }
 
-void DisableGlow() {
+inline void DisableGlow() {
 	if (!var.bUnload || var.bGlow)
 	{
 		SetBrightness(-5.f);
@@ -94,5 +94,44 @@ void DisableGlow() {
 		{
 			*(ClrRender*)Mem::FindDMAAddy(entity, { m_clrRender }) = clrRender;
 		}
+	}
+}
+
+inline void HandleGlow()
+{
+	while (t.bGlowT)
+	{
+		uintptr_t glowObject = *(DWORD*)(var.clientDll + dwGlowObjectManager);
+		int myTeam = *(int*)Mem::FindDMAAddy(var.localPlayer, { m_iTeamNum });
+
+		for (short int i = 0; i < 64; i++)
+		{
+			uintptr_t entity = var.clientDll + dwEntityList + i * var.nextEnt;
+			if (*(uintptr_t*)entity)
+			{
+				int team = *(int*)Mem::FindDMAAddy(entity, { m_iTeamNum });
+				int glowIndex = *(int*)Mem::FindDMAAddy(entity, { m_iGlowIndex });
+				state st;
+				st.health = *(int*)Mem::FindDMAAddy(entity, { m_iHealth });
+				st.defusing = *(bool*)Mem::FindDMAAddy(entity, { m_bIsDefusing });
+
+				if (team != myTeam)
+				{
+					GlowStruct Tgt = *(GlowStruct*)(glowObject + (glowIndex * 0x38));
+					SetEnemyGlow(entity, Tgt, st);
+					*(GlowStruct*)(glowObject + (glowIndex * 0x38)) = Tgt;
+					*(ClrRender*)Mem::FindDMAAddy(entity, { m_clrRender }) = st.clrRender;
+				}
+				else {
+					GlowStruct Egt = *(GlowStruct*)(glowObject + (glowIndex * 0x38));
+					SetTeamGlow(entity, Egt, st);
+					*(GlowStruct*)(glowObject + (glowIndex * 0x38)) = Egt;
+					*(ClrRender*)Mem::FindDMAAddy(entity, { m_clrRender }) = st.clrRender;
+				}
+			}
+		}
+
+		if (var.bLowCPU)
+			Sleep(5);
 	}
 }

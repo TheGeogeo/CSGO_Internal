@@ -8,6 +8,8 @@
 #include "Mem.h"
 #include "csgo_util.h"
 #include "Glow.h"
+#include "TriggerBot.h"
+#include "Other.h"
 
 using namespace hazedumper::netvars;
 using namespace hazedumper::signatures;
@@ -45,15 +47,42 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 				UI();
 			}
 
-			if (GetAsyncKeyState(VK_NUMPAD0) & 1)
+			if (GetAsyncKeyState(VK_F1) & 1)
 			{
 				var.bGlow = !var.bGlow;
 				UI();
 
 				if (var.bGlow)
+				{
 					SetBrightness(5.f);
+					t.glowT = new std::thread(&HandleGlow);
+				}
 				else
+				{
+					CloseThreadCustom(t.glowT, t.bGlowT);
 					DisableGlow();
+					t.bGlowT = true;
+				}
+			}
+
+			if (GetAsyncKeyState(VK_F2) & 1)
+			{
+				var.bTriggerBot = !var.bTriggerBot;
+				UI();
+
+				if (var.bTriggerBot)
+					t.triggerBotT = new std::thread(&HandleTBot);
+				else
+				{
+					CloseThreadCustom(t.triggerBotT, t.bTriggerBotT);
+					t.bTriggerBotT = true;
+				}
+			}
+
+			if (GetAsyncKeyState(VK_INSERT) & 1)
+			{
+				var.bLowCPU = !var.bLowCPU;
+				UI();
 			}
 
 			if (GetAsyncKeyState(VK_END) & 1)
@@ -90,43 +119,14 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 					*flashDur = 0;
 				}
 			}
-
-			if (var.bGlow)
-			{
-				uintptr_t glowObject = *(DWORD*)(var.clientDll + dwGlowObjectManager);
-				int myTeam = *(int*)Mem::FindDMAAddy((uintptr_t)var.localPlayer, { m_iTeamNum });
-
-				for (short int i = 0; i < 64; i++)
-				{
-					uintptr_t entity = var.clientDll + dwEntityList + i * var.nextEnt;
-					if (*(uintptr_t*)entity)
-					{
-						int team = *(int*)Mem::FindDMAAddy(entity, { m_iTeamNum });
-						int glowIndex = *(int*)Mem::FindDMAAddy(entity, { m_iGlowIndex });
-						state st;
-						st.health = *(int*)Mem::FindDMAAddy(entity, { m_iHealth });
-						st.defusing = *(bool*)Mem::FindDMAAddy(entity, { m_bIsDefusing });
-
-						if (team != myTeam)
-						{
-							GlowStruct Tgt = *(GlowStruct*)(glowObject + (glowIndex * 0x38));
-							SetEnemyGlow(entity, Tgt, st);
-							*(GlowStruct*)(glowObject + (glowIndex * 0x38)) = Tgt;
-							*(ClrRender*)Mem::FindDMAAddy(entity, { m_clrRender }) = st.clrRender;
-						}
-						else {
-							GlowStruct Egt = *(GlowStruct*)(glowObject + (glowIndex * 0x38));
-							SetTeamGlow(entity, Egt, st);
-							*(GlowStruct*)(glowObject + (glowIndex * 0x38)) = Egt;
-							*(ClrRender*)Mem::FindDMAAddy(entity, { m_clrRender }) = st.clrRender;
-						}
-					}
-				}
-			}
 		}
+
+		if (var.bLowCPU)
+			Sleep(5);
 	}
 
 	//disable all thing
+	CloseAllThreadEndMain();
 	DisableGlow();
 
 	int tmpaa = fclose(fConsole);
