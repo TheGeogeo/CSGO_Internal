@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "Other.h"
+#include "Other.hpp"
 
 inline void Shoot()
 {

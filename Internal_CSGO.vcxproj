@@ -144,14 +144,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="csgo.hpp" />
-    <ClInclude Include="csgo_util.h" />
+    <ClInclude Include="csgo_util.hpp" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Glow.h" />
+    <ClInclude Include="Glow.hpp" />
     <ClInclude Include="Mem.h" />
-    <ClInclude Include="Other.h" />
+    <ClInclude Include="Other.hpp" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Proc.h" />
-    <ClInclude Include="TriggerBot.h" />
+    <ClInclude Include="TriggerBot.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

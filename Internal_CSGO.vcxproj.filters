@@ -30,19 +30,19 @@
     <ClInclude Include="Proc.h">
       <Filter>memory</Filter>
     </ClInclude>
-    <ClInclude Include="csgo_util.h">
+    <ClInclude Include="csgo_util.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="csgo.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Glow.h">
+    <ClInclude Include="Glow.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="TriggerBot.h">
+    <ClInclude Include="TriggerBot.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Other.h">
+    <ClInclude Include="Other.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include <thread>
 
-#include "Other.h"
+#include "Other.hpp"
 
 using namespace hazedumper::netvars;
 using namespace hazedumper::signatures;

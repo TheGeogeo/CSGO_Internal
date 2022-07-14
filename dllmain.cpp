@@ -6,10 +6,10 @@
 
 #include "Proc.h"
 #include "Mem.h"
-#include "csgo_util.h"
-#include "Glow.h"
-#include "TriggerBot.h"
-#include "Other.h"
+#include "csgo_util.hpp"
+#include "Glow.hpp"
+#include "TriggerBot.hpp"
+#include "Other.hpp"
 
 using namespace hazedumper::netvars;
 using namespace hazedumper::signatures;
