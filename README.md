@@ -2,12 +2,12 @@
 
 inject with manual mapping
 
-<img src="img/ManualMappingCSGO.PNG">
+<img src="CSGO_Internal/img/ManualMappingCSGO.PNG">
 
 As you can see the glow progress from green to red (based on health)<br>
 The skin is green for a better render.
 
-<img src="img/GlowRender.PNG">
+<img src="CSGO_Internal/img/GlowRender.PNG">
 
 # FEATURE
 - [x] CPU Usage
