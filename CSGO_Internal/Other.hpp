@@ -6,6 +6,14 @@ struct vec3
 {
 	float x, y, z;
 
+	vec3& operator%(vec3 arg) // dodge conflit i hopre i never use true modulo on vec3 lmao
+	{
+		x += arg.x;
+		y += arg.y;
+		z += arg.z;
+		return *this;
+	}
+
 	vec3 operator+(vec3 d) {
 		return { x + d.x, y + d.y, z + d.z };
 	}
@@ -35,17 +43,29 @@ struct thread
 
 	std::atomic_bool bAutoRecoilT = true;
 	std::thread* autoRecoilT = nullptr;
+
+	std::atomic_bool bAimBotT = true;
+	std::thread* aimBotT = nullptr;
 }t;
 
-void CloseThreadCustom(std::thread* th, std::atomic_bool& bT)
+inline void CloseThreadCustom(std::thread* th, std::atomic_bool& bT)
 {
 	bT = false;
-	th->join();
+	bool joinned = false;
+	while (!joinned)
+	{
+		if (th->joinable())
+		{
+			th->join();
+			joinned = true;
+		}
+	}
 	delete th;
 	th = nullptr;
+	bT = true;
 }
 
-void CloseAllThreadEndMain()
+inline void CloseAllThreadEndMain()
 {
 	if (t.glowT && t.glowT != nullptr)
 		CloseThreadCustom(t.glowT, t.bGlowT);
@@ -55,4 +75,7 @@ void CloseAllThreadEndMain()
 
 	if (t.bAutoRecoilT && t.autoRecoilT != nullptr)
 		CloseThreadCustom(t.autoRecoilT, t.bAutoRecoilT);
+
+	if (t.bAimBotT && t.aimBotT != nullptr)
+		CloseThreadCustom(t.aimBotT, t.bAimBotT);
 }

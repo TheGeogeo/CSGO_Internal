@@ -74,35 +74,19 @@ inline void SetEnemyGlow(uintptr_t entity, GlowStruct& gt, state& st) {
 	st.clrRender.blue = 0;
 }
 
-inline void DisableGlow() {
-	if (!var.bUnload || var.bGlow)
-	{
-		SetBrightness(-5.f);
-		SetBrightness(5.f);
-		SetBrightness(-5.f);
-
-		ClrRender clrRender;
-		clrRender.red = -1;
-		clrRender.green = -1;
-		clrRender.blue = -1;
-
-		for (short int i = 0; i < 64; i++)
-		{
-			uintptr_t* entity = (uintptr_t*)(var.clientDll + dwEntityList + i * var.nextEnt);
-			if (*entity)
-			{
-				*(ClrRender*)(*entity + m_clrRender) = clrRender;
-			}
-		}
-	}
-}
-
 inline void HandleGlow()
 {
+	SetBrightness(5.f);
+
 	while (t.bGlowT)
 	{
+		if (var.bLowCPU)
+			Sleep(var.delayUsageCPU);
+
+		if (!*var.localPlayer) continue;
+
 		uintptr_t glowObject = *(DWORD*)(var.clientDll + dwGlowObjectManager);
-		int myTeam = *(int*)(var.localPlayer + m_iTeamNum);
+		int myTeam = *(int*)(*var.localPlayer + m_iTeamNum);
 
 		for (short int i = 0; i < 64; i++)
 		{
@@ -130,8 +114,23 @@ inline void HandleGlow()
 				}
 			}
 		}
+	}
 
-		if (var.bLowCPU)
-			Sleep(var.delayUsageCPU);
+	SetBrightness(-5.f);
+	SetBrightness(5.f);
+	SetBrightness(-5.f);
+
+	ClrRender clrRender;
+	clrRender.red = -1;
+	clrRender.green = -1;
+	clrRender.blue = -1;
+
+	for (short int i = 0; i < 64; i++)
+	{
+		uintptr_t* entity = (uintptr_t*)(var.clientDll + dwEntityList + i * var.nextEnt);
+		if (*entity)
+		{
+			*(ClrRender*)(*entity + m_clrRender) = clrRender;
+		}
 	}
 }

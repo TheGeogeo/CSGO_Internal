@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AimBot.hpp" />
     <ClInclude Include="AutoRecoil.hpp" />
     <ClInclude Include="csgo.hpp" />
     <ClInclude Include="csgo_util.hpp" />

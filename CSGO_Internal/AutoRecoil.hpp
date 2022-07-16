@@ -2,10 +2,15 @@
 
 #include "Other.hpp"
 
-void HandleAutoRecoil() {
+inline void HandleAutoRecoil() {
 	vec3 oPunch = { 0,0,0 };
 	while (t.bAutoRecoilT)
 	{
+		if (var.bLowCPU)
+			Sleep(var.delayUsageCPU);
+
+		if (!*var.localPlayer) continue;
+
 		vec3 punchAngle = *var.aimPunchAngle * 2;
 		if (*var.iShotFired > 1)
 		{
@@ -19,8 +24,5 @@ void HandleAutoRecoil() {
 		}
 		//fix
 		oPunch = punchAngle;
-
-		if (var.bLowCPU)
-			Sleep(var.delayUsageCPU);
 	}
 }

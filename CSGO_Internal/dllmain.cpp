@@ -9,6 +9,7 @@
 #include "Glow.hpp"
 #include "TriggerBot.hpp"
 #include "AutoRecoil.hpp"
+#include "AimBot.hpp"
 #include "Other.hpp"
 
 using namespace hazedumper::netvars;
@@ -25,112 +26,116 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 
 	while (true)
 	{
-		InitVariable();
-		if (var.clientDll && var.localPlayer)
+		if (!var.bUnload)
+			InitVariable();
+
+		if (!*var.localPlayer) continue;
+
+		if (GetAsyncKeyState(VK_NUMPAD1) & 1)
 		{
-			if (GetAsyncKeyState(VK_NUMPAD1) & 1)
-			{
-				var.bBhop = !var.bBhop;
-				UI();
-			}
+			var.bBhop = !var.bBhop;
+			UI();
+		}
 
-			if (GetAsyncKeyState(VK_NUMPAD2) & 1)
-			{
-				var.bRadar = !var.bRadar;
-				UI();
-			}
+		if (GetAsyncKeyState(VK_NUMPAD2) & 1)
+		{
+			var.bRadar = !var.bRadar;
+			UI();
+		}
 
-			if (GetAsyncKeyState(VK_NUMPAD3) & 1)
-			{
-				var.bAntiFlash = !var.bAntiFlash;
-				UI();
-			}
+		if (GetAsyncKeyState(VK_NUMPAD3) & 1)
+		{
+			var.bAntiFlash = !var.bAntiFlash;
+			UI();
+		}
 
-			if (GetAsyncKeyState(VK_F1) & 1)
-			{
-				var.bGlow = !var.bGlow;
-				UI();
+		if (GetAsyncKeyState(VK_F1) & 1)
+		{
+			var.bGlow = !var.bGlow;
 
-				if (var.bGlow)
+			if (var.bGlow)
+				t.glowT = new std::thread(&HandleGlow);
+
+			else
+				CloseThreadCustom(t.glowT, t.bGlowT);
+
+			UI();
+		}
+
+		if (GetAsyncKeyState(VK_F2) & 1)
+		{
+			var.bTriggerBot = !var.bTriggerBot;
+
+			if (var.bTriggerBot)
+				t.triggerBotT = new std::thread(&HandleTBot);
+			else
+				CloseThreadCustom(t.triggerBotT, t.bTriggerBotT);
+
+			UI();
+		}
+
+		if (GetAsyncKeyState(VK_F3) & 1)
+		{
+			var.bAutoRecoil = !var.bAutoRecoil;
+
+			if (var.bAutoRecoil)
+				t.autoRecoilT = new std::thread(&HandleAutoRecoil);
+			else
+				CloseThreadCustom(t.autoRecoilT, t.bAutoRecoilT);
+
+			UI();
+		}
+
+		if (GetAsyncKeyState(VK_F4) & 1)
+		{
+			var.bAimBot = !var.bAimBot;
+
+			if (var.bAimBot)
+				t.aimBotT = new std::thread(&MainAimBot);
+			else
+				CloseThreadCustom(t.aimBotT, t.bAimBotT);
+
+			UI();
+		}
+
+		if (GetAsyncKeyState(VK_INSERT) & 1)
+		{
+			var.bLowCPU = !var.bLowCPU;
+			UI();
+		}
+
+		if (GetAsyncKeyState(VK_END) & 1)
+		{
+			var.bUnload = true;
+			break;
+		}
+
+		if (var.bBhop)
+		{
+			if (isPlayerMoving())
+				if (*(int*)(*var.localPlayer + m_fFlags) == 257 && GetAsyncKeyState(VK_SPACE))
+					*(BYTE*)(var.clientDll + dwForceJump) = 6;
+		}
+
+		if (var.bRadar)
+		{
+			for (short i = 0; i < 64; i++)
+			{
+				DWORD ent = *(DWORD*)(var.clientDll + dwEntityList + i * var.nextEnt);
+				if (ent)
 				{
-					SetBrightness(5.f);
-					t.glowT = new std::thread(&HandleGlow);
-				}
-				else
-				{
-					CloseThreadCustom(t.glowT, t.bGlowT);
-					DisableGlow();
-					t.bGlowT = true;
+					*(BYTE*)(ent + m_bSpotted) = 1;
+					*(BYTE*)(ent + m_bSpottedByMask) = 1;
 				}
 			}
+		}
 
-			if (GetAsyncKeyState(VK_F2) & 1)
+		if (var.bAntiFlash)
+		{
+			int* flashDur = (int*)(*var.localPlayer + m_flFlashDuration);
+			if (*flashDur > 0)
 			{
-				var.bTriggerBot = !var.bTriggerBot;
-				UI();
-
-				if (var.bTriggerBot)
-					t.triggerBotT = new std::thread(&HandleTBot);
-				else
-				{
-					CloseThreadCustom(t.triggerBotT, t.bTriggerBotT);
-					t.bTriggerBotT = true;
-				}
-			}
-
-			if (GetAsyncKeyState(VK_F3) & 1)
-			{
-				var.bAutoRecoil = !var.bAutoRecoil;
-				UI();
-
-				if (var.bAutoRecoil)
-					t.autoRecoilT = new std::thread(&HandleAutoRecoil);
-				else
-				{
-					CloseThreadCustom(t.autoRecoilT, t.bAutoRecoilT);
-					t.bAutoRecoilT = true;
-				}
-			}
-
-			if (GetAsyncKeyState(VK_INSERT) & 1)
-			{
-				var.bLowCPU = !var.bLowCPU;
-				UI();
-			}
-
-			if (GetAsyncKeyState(VK_END) & 1)
-			{
-				var.bUnload = true;
-				break;
-			}
-
-			if (var.bBhop)
-			{
-				if (isPlayerMoving())
-					if (*(int*)(var.localPlayer + m_fFlags) == 257 && GetAsyncKeyState(VK_SPACE))
-						*(BYTE*)(var.clientDll + dwForceJump) = 6;
-			}
-
-			if (var.bRadar)
-			{
-				for (short i = 0; i < 64; i++)
-				{
-					DWORD ent = *(DWORD*)(var.clientDll + dwEntityList + i * var.nextEnt);
-					if (ent)
-					{
-						*(BYTE*)(ent + m_bSpotted) = 1;
-						*(BYTE*)(ent + m_bSpottedByMask) = 1;
-					}
-				}
-			}
-
-			if (var.bAntiFlash)
-			{
-				int* flashDur = (int*)(var.localPlayer + m_flFlashDuration);
-				if (*flashDur > 0)
-				{
-					*flashDur = 0;
-				}
+				*flashDur = 0;
 			}
 		}
 
@@ -140,7 +145,6 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 
 	//disable all thing
 	CloseAllThreadEndMain();
-	DisableGlow();
 
 	int tmpaa = fclose(fConsole);
 	FreeConsole();

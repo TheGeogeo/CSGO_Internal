@@ -16,7 +16,8 @@ The skin is green for a better render.
 - [x] Anti Flash
 - [x] Glow ESP
 - [x] Trigger Bot
-- [ ] Aim Bot
+- [x] Aim Bot
+    - [ ] Aim only when ennemy is visible
 - [x] Auto Recoil
 
 # OFFSET
