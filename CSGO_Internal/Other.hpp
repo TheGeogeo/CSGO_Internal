@@ -6,7 +6,7 @@ struct vec3
 {
 	float x, y, z;
 
-	vec3& operator%(vec3 arg) // dodge conflit i hopre i never use true modulo on vec3 lmao
+	vec3& operator+=(vec3 arg)
 	{
 		x += arg.x;
 		y += arg.y;

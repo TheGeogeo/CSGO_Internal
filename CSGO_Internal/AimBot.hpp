@@ -35,7 +35,7 @@ inline void AimAt(vec3* target)
 
 	vec3 origin = *GetVecOrigin(var.localPlayer);
 	vec3 viewOffset = *GetViewOffset(var.localPlayer);
-	vec3* myPos = &(origin % viewOffset); // is not a modulo look vec3 struct
+	vec3* myPos = &(origin += viewOffset);
 
 	vec3 deltaVec = { target->x - myPos->x, target->y - myPos->y, target->z - myPos->z };
 	float deltaVecLength = sqrt(deltaVec.x * deltaVec.x + deltaVec.y * deltaVec.y + deltaVec.z * deltaVec.z);
