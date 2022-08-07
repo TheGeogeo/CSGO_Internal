@@ -39,6 +39,7 @@ struct variables
 	bool bAutoRecoil = false;
 	bool bAimBot = false;
 	bool bEsp2D = false;
+	bool bSnapLine = false;
 
 	vec3* vecOrigin;
 	vec3* viewAngles;
@@ -118,6 +119,7 @@ void UI()
 	const char* strAutoRecoil = var.bAutoRecoil ? "ON" : "OFF";
 	const char* strAimbBot = var.bAimBot ? "ON" : "OFF";
 	const char* strEsp2D = var.bEsp2D ? "ON" : "OFF";
+	const char* strSnapLine = var.bSnapLine ? "ON" : "OFF";
 
 	std::cout << "By TheGeogeo" << std::endl;
 	std::cout << "" << std::endl;
@@ -128,8 +130,9 @@ void UI()
 	std::cout << "F1 GlowHack > " << strGlow << std::endl;
 	std::cout << "F2 TriggerBot > " << strTrigger << std::endl;
 	std::cout << "F3 Auto Recoil > " << strAutoRecoil << std::endl;
-	std::cout << "F4 Aim Bot > " << strAimbBot << std::endl;
+	std::cout << "F4 Aim Bot > " << strAimbBot << " | Press alt for aiming closest target" << std::endl;
 	std::cout << "F5 Esp 2D box > " << strEsp2D << std::endl;
+	std::cout << "F6 Snapline > " << strSnapLine << " | Can be use only if ESP 2D is actived" << std::endl;
 	std::cout << "" << std::endl;
 	std::cout << "INSERT > " << strCPU << " | High cpu is better if you have a good cpu" << std::endl;
 	std::cout << "" << std::endl;

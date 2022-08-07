@@ -20,6 +20,7 @@ The skin is green for a better render.
 - [x] Aim Bot
     - [ ] Aim only when ennemy is visible
 - [x] ESP
+    - [x] Snapline
     - [x] ESP 2D
     - [ ] ESP 3D
 

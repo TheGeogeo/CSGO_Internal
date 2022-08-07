@@ -32,9 +32,12 @@ void APIENTRY hkEndScene(LPDIRECT3DDEVICE9 o_pDevice) {
 		Vec2 entPos2D, entHead2D;
 		if (hack->WorldToScreen(curEnt->m_vecOrigin, entPos2D))
 		{
+			if (var.bSnapLine)
+				DrawLine(entPos2D.x, entPos2D.y, windowWidth / 2, windowHeight, 2, colTeam);
+
 			if (hack->WorldToScreen(entHead3D, entHead2D))
 			{
-				DrawEspBox2D(entPos2D, entHead2D, 2, colTeam);
+				DrawEspBox2D(entPos2D, entHead2D, 1, colTeam);
 
 				int height = ABS(entPos2D.y - entHead2D.y);
 				int dx = (entPos2D.x - entHead2D.x);
@@ -83,8 +86,16 @@ inline void MainEsp2D() {
 
 		if (!*var.localPlayer) continue;
 
+		if (GetAsyncKeyState(VK_F6) & 1)
+		{
+			var.bSnapLine = !var.bSnapLine;
+			UI();
+		}
+
 		hack->Update();
 	}
+
+	var.bSnapLine = false;
 
 	Patch((BYTE*)d3d9Device[42], endSceneByte, 7);
 }
