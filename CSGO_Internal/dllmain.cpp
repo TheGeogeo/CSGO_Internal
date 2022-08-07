@@ -10,6 +10,7 @@
 #include "TriggerBot.hpp"
 #include "AutoRecoil.hpp"
 #include "AimBot.hpp"
+#include "Esp2D.hpp"
 #include "Other.hpp"
 
 using namespace hazedumper::netvars;
@@ -94,6 +95,18 @@ DWORD WINAPI MainHack(HMODULE hModule) {
 				t.aimBotT = new std::thread(&MainAimBot);
 			else
 				CloseThreadCustom(t.aimBotT, t.bAimBotT);
+
+			UI();
+		}
+
+		if (GetAsyncKeyState(VK_F5) & 1)
+		{
+			var.bEsp2D = !var.bEsp2D;
+
+			if (var.bEsp2D)
+				t.Esp2DT = new std::thread(&MainEsp2D);
+			else
+				CloseThreadCustom(t.Esp2DT, t.bEsp2DT);
 
 			UI();
 		}

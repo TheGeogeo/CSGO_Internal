@@ -51,6 +51,24 @@
     <ClInclude Include="AimBot.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Includes.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Drawing.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Dx.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Hack.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Hook.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Esp2D.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -64,6 +82,18 @@
     </ClCompile>
     <ClCompile Include="Proc.cpp">
       <Filter>memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Drawing.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Dx.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Hack.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Hook.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

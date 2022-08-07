@@ -70,6 +70,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DXSDK_DIR)Include;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DXSDK_DIR)Lib\x86;</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DXSDK_DIR)Include;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DXSDK_DIR)Lib\x86;</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -143,12 +151,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Drawing.h" />
+    <ClInclude Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Dx.h" />
+    <ClInclude Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Hack.h" />
+    <ClInclude Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Hook.h" />
     <ClInclude Include="AimBot.hpp" />
     <ClInclude Include="AutoRecoil.hpp" />
     <ClInclude Include="csgo.hpp" />
     <ClInclude Include="csgo_util.hpp" />
+    <ClInclude Include="Esp2D.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Glow.hpp" />
+    <ClInclude Include="Includes.h" />
     <ClInclude Include="Mem.h" />
     <ClInclude Include="Other.hpp" />
     <ClInclude Include="pch.h" />
@@ -156,6 +170,10 @@
     <ClInclude Include="TriggerBot.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Drawing.cpp" />
+    <ClCompile Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Dx.cpp" />
+    <ClCompile Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Hack.cpp" />
+    <ClCompile Include="..\..\Tuto_GH_D3D9_CSGO_ESP\Hook.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Mem.cpp" />
     <ClCompile Include="pch.cpp">

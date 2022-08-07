@@ -15,6 +15,10 @@ inline uintptr_t* GetClosestEnemy()
 		{
 			int team = *(int*)(*entity + m_iTeamNum);
 			int health = *(int*)(*entity + m_iHealth);
+			bool bDormant = *(bool*)(*entity + m_bDormant);
+
+			if (bDormant)continue;
+
 			if (myTeam != team && myHealth > 0 && health > 0)
 			{
 				float currentDist = GetDistance(entity);
@@ -59,10 +63,13 @@ inline void MainAimBot() {
 
 		if (!*var.localPlayer) continue;
 
-		uintptr_t* closestEnemy = GetClosestEnemy();
-		if (closestEnemy)
+		if (GetAsyncKeyState(VK_MENU))
 		{
-			AimAt(GetBonePos(closestEnemy, 8));
+			uintptr_t* closestEnemy = GetClosestEnemy();
+			if (closestEnemy)
+			{
+				AimAt(GetBonePos(closestEnemy, 8));
+			}
 		}
 	}
 }

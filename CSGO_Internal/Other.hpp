@@ -46,6 +46,9 @@ struct thread
 
 	std::atomic_bool bAimBotT = true;
 	std::thread* aimBotT = nullptr;
+
+	std::atomic_bool bEsp2DT = true;
+	std::thread* Esp2DT = nullptr;
 }t;
 
 inline void CloseThreadCustom(std::thread* th, std::atomic_bool& bT)
@@ -78,4 +81,7 @@ inline void CloseAllThreadEndMain()
 
 	if (t.bAimBotT && t.aimBotT != nullptr)
 		CloseThreadCustom(t.aimBotT, t.bAimBotT);
+
+	if (t.bEsp2DT && t.Esp2DT != nullptr)
+		CloseThreadCustom(t.Esp2DT, t.bEsp2DT);
 }
